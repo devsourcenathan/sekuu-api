@@ -14,17 +14,12 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-    {
-        // User::factory(10)->create();
-
-        // $this->call([
-        //     RoleSeeder::class,
-        //     PermissionSeeder::class,
-        //     AdminSeeder::class,
-        //     CategorySeeder::class,
-        // ]);
-
+    { 
         $this->call([
+            RoleSeeder::class,
+            PermissionSeeder::class,
+            AdminSeeder::class,
+            CategorySeeder::class,
             CourseSeeder::class,
             ChapterSeeder::class,
             LessonSeeder::class,
@@ -33,11 +28,7 @@ class DatabaseSeeder extends Seeder
             PaymentSeeder::class,
             EnrollmentSeeder::class,
             CertificateSeeder::class,
-            ResourceSeeder::class,
-            RoleSeeder::class,
-            PermissionSeeder::class,
-            AdminSeeder::class,
-            CategorySeeder::class,
+            ResourceSeeder::class, 
         ]);
     }
 }
