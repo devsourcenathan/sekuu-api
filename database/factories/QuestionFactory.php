@@ -14,11 +14,11 @@ class QuestionFactory extends Factory
     {
         return [
             'test_id' => Test::factory(),
-            'question_text' => fake()->sentence() . '?',
-            'explanation' => fake()->paragraph(),
-            'type' => fake()->randomElement(['multiple_choice', 'true_false', 'short_answer']),
-            'points' => fake()->numberBetween(1, 10),
-            'order' => fake()->numberBetween(1, 50),
+            'question_text' => $this->faker->sentence() . '?',
+            'explanation' => $this->faker->paragraph(),
+            'type' => $this->faker->randomElement(['multiple_choice', 'true_false', 'short_answer']),
+            'points' => $this->faker->numberBetween(1, 10),
+            'order' => $this->faker->numberBetween(1, 50),
             'is_required' => true,
             'requires_manual_grading' => false,
         ];

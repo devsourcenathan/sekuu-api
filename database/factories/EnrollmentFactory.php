@@ -16,10 +16,10 @@ class EnrollmentFactory extends Factory
         return [
             'user_id' => User::factory(),
             'course_id' => Course::factory(),
-            'status' => fake()->randomElement(['active', 'completed', 'cancelled']),
-            'enrolled_at' => fake()->dateTimeBetween('-6 months', 'now'),
+            'status' => $this->faker->randomElement(['active', 'completed', 'cancelled']),
+            'enrolled_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
             'completed_at' => null,
-            'progress_percentage' => fake()->numberBetween(0, 100),
+            'progress_percentage' => $this->faker->numberBetween(0, 100),
         ];
     }
 

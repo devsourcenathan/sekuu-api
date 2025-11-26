@@ -14,12 +14,12 @@ class ChapterFactory extends Factory
     {
         return [
             'course_id' => Course::factory(),
-            'title' => fake()->sentence(3),
-            'description' => fake()->paragraph(),
-            'order' => fake()->numberBetween(1, 10),
-            'is_free' => fake()->boolean(20),
-            'is_published' => fake()->boolean(80),
-            'duration_minutes' => fake()->numberBetween(30, 180),
+            'title' => $this->faker->sentence(3),
+            'description' => $this->faker->paragraph(),
+            'order' => $this->faker->numberBetween(1, 10),
+            'is_free' => $this->faker->boolean(20),
+            'is_published' => $this->faker->boolean(80),
+            'duration_minutes' => $this->faker->numberBetween(30, 180),
         ];
     }
 }

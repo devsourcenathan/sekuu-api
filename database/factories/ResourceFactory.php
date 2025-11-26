@@ -12,22 +12,22 @@ class ResourceFactory extends Factory
 
     public function definition(): array
     {
-        $fileName = fake()->word() . '.pdf';
+        $fileName = $this->faker->word() . '.pdf';
         
         return [
             'resourceable_id' => Course::factory(),
             'resourceable_type' => Course::class,
-            'title' => fake()->sentence(3),
-            'description' => fake()->paragraph(),
+            'title' => $this->faker->sentence(3),
+            'description' => $this->faker->paragraph(),
             'file_path' => 'resources/' . $fileName,
             'file_name' => $fileName,
             'file_type' => 'application/pdf',
-            'file_size' => fake()->numberBetween(100000, 5000000),
-            'is_free' => fake()->boolean(30),
+            'file_size' => $this->faker->numberBetween(100000, 5000000),
+            'is_free' => $this->faker->boolean(30),
             'is_downloadable' => true,
             'download_limit' => null,
-            'downloads_count' => fake()->numberBetween(0, 100),
-            'order' => fake()->numberBetween(1, 10),
+            'downloads_count' => $this->faker->numberBetween(0, 100),
+            'order' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

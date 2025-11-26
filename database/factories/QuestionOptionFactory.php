@@ -14,9 +14,9 @@ class QuestionOptionFactory extends Factory
     {
         return [
             'question_id' => Question::factory(),
-            'option_text' => fake()->sentence(),
+            'option_text' => $this->faker->sentence(),
             'is_correct' => false,
-            'order' => fake()->numberBetween(1, 5),
+            'order' => $this->faker->numberBetween(1, 5),
         ];
     }
 
