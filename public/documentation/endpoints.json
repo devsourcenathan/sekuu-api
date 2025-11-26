@@ -1,0 +1,1997 @@
+{
+    "info": {
+        "name": "Training Platform API - Complete Collection",
+        "description": "Collection complète pour tester tous les endpoints de l'API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "course_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "chapter_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "lesson_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "test_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "submission_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "payment_id",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "01 - Authentication",
+            "item": [
+                {
+                    "name": "Register",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set('token', jsonData.data.access_token);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"phone\": \"+237655443322\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "register"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set('token', jsonData.data.access_token);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"instructor@trainingplatform.com\",\n  \"password\": \"password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/me",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "me"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Forgot Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/forgot-password",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "forgot-password"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Reset Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"token\": \"reset_token_here\",\n  \"email\": \"test@example.com\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/reset-password",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "reset-password"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/logout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "logout"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "02 - Courses",
+            "item": [
+                {
+                    "name": "List All Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/courses?search=laravel&level=beginner&is_free=false&sort_by=created_at&sort_order=desc&per_page=15",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "laravel"
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": "1",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "level",
+                                    "value": "beginner"
+                                },
+                                {
+                                    "key": "is_free",
+                                    "value": "false"
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "created_at"
+                                },
+                                {
+                                    "key": "sort_order",
+                                    "value": "desc"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Course",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set('course_id', jsonData.data.id);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Complete Laravel Development Course\",\n  \"description\": \"Learn Laravel from scratch to advanced level\",\n  \"what_you_will_learn\": \"Build full-stack applications with Laravel\",\n  \"requirements\": \"Basic PHP knowledge\",\n  \"target_audience\": \"Web developers\",\n  \"category_id\": 1,\n  \"level\": \"intermediate\",\n  \"language\": \"en\",\n  \"is_free\": false,\n  \"price\": 49.99,\n  \"currency\": \"USD\",\n  \"is_public\": true,\n  \"requires_approval\": false,\n  \"max_students\": 100,\n  \"access_duration_days\": 365,\n  \"allow_download\": true,\n  \"has_certificate\": true,\n  \"has_forum\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/courses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Course Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Course",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Complete Laravel Development Course - Updated\",\n  \"price\": 39.99,\n  \"discount_price\": 29.99,\n  \"discount_start_date\": \"2024-01-01\",\n  \"discount_end_date\": \"2024-01-31\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Publish Course",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}/publish",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}",
+                                "publish"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Enroll in Course",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}/enroll",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}",
+                                "enroll"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My Instructor Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/courses/my-courses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "my-courses"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Course",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "03 - Chapters",
+            "item": [
+                {
+                    "name": "List Chapters",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}/chapters",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}",
+                                "chapters"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Chapter",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set('chapter_id', jsonData.data.id);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Introduction to Laravel\",\n  \"description\": \"Get started with Laravel framework basics\",\n  \"order\": 1,\n  \"is_free\": true,\n  \"is_published\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}/chapters",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}",
+                                "chapters"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Chapter Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}/chapters/{{chapter_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}",
+                                "chapters",
+                                "{{chapter_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Chapter",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Introduction to Laravel - Updated\",\n  \"description\": \"Updated description\",\n  \"order\": 1,\n  \"is_free\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}/chapters/{{chapter_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}",
+                                "chapters",
+                                "{{chapter_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Chapter",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/courses/{{course_id}}/chapters/{{chapter_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "courses",
+                                "{{course_id}}",
+                                "chapters",
+                                "{{chapter_id}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "04 - Lessons",
+            "item": [
+                {
+                    "name": "List Lessons",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/chapters/{{chapter_id}}/lessons",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "chapters",
+                                "{{chapter_id}}",
+                                "lessons"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Lesson - Video",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set('lesson_id', jsonData.data.id);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Installing Laravel\",\n  \"description\": \"Learn how to install Laravel on your system\",\n  \"content_type\": \"video\",\n  \"video_url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n  \"video_provider\": \"youtube\",\n  \"video_id\": \"dQw4w9WgXcQ\",\n  \"order\": 1,\n  \"duration_minutes\": 15,\n  \"is_free\": true,\n  \"is_preview\": true,\n  \"is_downloadable\": false,\n  \"auto_complete\": true,\n  \"completion_threshold\": 80\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/chapters/{{chapter_id}}/lessons",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "chapters",
+                                "{{chapter_id}}",
+                                "lessons"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Lesson - Text",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Laravel Directory Structure\",\n  \"description\": \"Understanding Laravel folder structure\",\n  \"content_type\": \"text\",\n  \"content\": \"<h1>Laravel Directory Structure</h1><p>Laravel follows MVC pattern...</p>\",\n  \"order\": 2,\n  \"duration_minutes\": 10,\n  \"is_free\": false,\n  \"is_downloadable\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/chapters/{{chapter_id}}/lessons",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "chapters",
+                                "{{chapter_id}}",
+                                "lessons"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Lesson Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/chapters/{{chapter_id}}/lessons/{{lesson_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "chapters",
+                                "{{chapter_id}}",
+                                "lessons",
+                                "{{lesson_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Lesson",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Installing Laravel - Updated\",\n  \"duration_minutes\": 20,\n  \"is_free\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/chapters/{{chapter_id}}/lessons/{{lesson_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "chapters",
+                                "{{chapter_id}}",
+                                "lessons",
+                                "{{lesson_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Mark Lesson as Complete",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/chapters/{{chapter_id}}/lessons/{{lesson_id}}/complete",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "chapters",
+                                "{{chapter_id}}",
+                                "lessons",
+                                "{{lesson_id}}",
+                                "complete"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Lesson Progress",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"progress_percentage\": 75,\n  \"watch_time_seconds\": 450\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/chapters/{{chapter_id}}/lessons/{{lesson_id}}/progress",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "chapters",
+                                "{{chapter_id}}",
+                                "lessons",
+                                "{{lesson_id}}",
+                                "progress"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Lesson",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/chapters/{{chapter_id}}/lessons/{{lesson_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "chapters",
+                                "{{chapter_id}}",
+                                "lessons",
+                                "{{lesson_id}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "05 - Resources",
+            "item": [
+                {
+                    "name": "Upload Resource",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "resourceable_type",
+                                    "value": "App\\Models\\Course",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "resourceable_id",
+                                    "value": "{{course_id}}",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "title",
+                                    "value": "Course Syllabus PDF",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Complete course syllabus",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": "/path/to/syllabus.pdf"
+                                },
+                                {
+                                    "key": "is_free",
+                                    "value": "true",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "is_downloadable",
+                                    "value": "true",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "download_limit",
+                                    "value": "5",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "order",
+                                    "value": "1",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/resources",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "resources"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Download Resource",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/resources/1/download",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "resources",
+                                "1",
+                                "download"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Resource",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/resources/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "resources",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "06 - Tests",
+            "item": [
+                {
+                    "name": "Create Test",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set('test_id', jsonData.data.id);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"testable_type\": \"App\\\\Models\\\\Chapter\",\n  \"testable_id\": \"{{chapter_id}}\",\n  \"title\": \"Laravel Basics Quiz\",\n  \"description\": \"Test your understanding of Laravel basics\",\n  \"instructions\": \"Answer all questions to the best of your ability\",\n  \"type\": \"formative\",\n  \"position\": \"after_chapter\",\n  \"duration_minutes\": 30,\n  \"max_attempts\": 3,\n  \"passing_score\": 70,\n  \"show_results_immediately\": true,\n  \"show_correct_answers\": true,\n  \"randomize_questions\": false,\n  \"randomize_options\": true,\n  \"one_question_per_page\": false,\n  \"allow_back_navigation\": true,\n  \"auto_save_draft\": true,\n  \"validation_type\": \"automatic\",\n  \"is_published\": true,\n  \"disable_copy_paste\": true,\n  \"full_screen_required\": false,\n  \"webcam_monitoring\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/tests",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Question - Single Choice",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"question_text\": \"What is Laravel?\",\n  \"explanation\": \"Laravel is a PHP web application framework with expressive, elegant syntax.\",\n  \"type\": \"single_choice\",\n  \"points\": 10,\n  \"order\": 1,\n  \"is_required\": true,\n  \"options\": [\n    {\n      \"option_text\": \"A PHP Framework\",\n      \"is_correct\": true,\n      \"feedback\": \"Correct! Laravel is indeed a PHP framework.\"\n    },\n    {\n      \"option_text\": \"A JavaScript Library\",\n      \"is_correct\": false,\n      \"feedback\": \"Incorrect. Laravel is not a JavaScript library.\"\n    },\n    {\n      \"option_text\": \"A Database\",\n      \"is_correct\": false\n    },\n    {\n      \"option_text\": \"An Operating System\",\n      \"is_correct\": false\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}/questions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}",
+                                "questions"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Question - Multiple Choice",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"question_text\": \"Which of the following are Laravel features? (Select all that apply)\",\n  \"type\": \"multiple_choice\",\n  \"points\": 15,\n  \"order\": 2,\n  \"options\": [\n    {\n      \"option_text\": \"Eloquent ORM\",\n      \"is_correct\": true\n    },\n    {\n      \"option_text\": \"Blade Templating\",\n      \"is_correct\": true\n    },\n    {\n      \"option_text\": \"React Components\",\n      \"is_correct\": false\n    },\n    {\n      \"option_text\": \"Artisan CLI\",\n      \"is_correct\": true\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}/questions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}",
+                                "questions"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Question - True/False",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"question_text\": \"Laravel uses the MVC architectural pattern.\",\n  \"type\": \"true_false\",\n  \"points\": 5,\n  \"order\": 3,\n  \"options\": [\n    {\n      \"option_text\": \"True\",\n      \"is_correct\": true\n    },\n    {\n      \"option_text\": \"False\",\n      \"is_correct\": false\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}/questions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}",
+                                "questions"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Question - Short Answer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"question_text\": \"What command is used to create a new Laravel project?\",\n  \"type\": \"short_answer\",\n  \"points\": 10,\n  \"order\": 4,\n  \"explanation\": \"The command is: composer create-project laravel/laravel project-name\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}/questions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}",
+                                "questions"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Test Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Test",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Laravel Basics Quiz - Updated\",\n  \"duration_minutes\": 45,\n  \"max_attempts\": 5,\n  \"passing_score\": 75\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Start Test",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set('submission_id', jsonData.data.id);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}/start",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}",
+                                "start"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Save Draft Answers",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"answers\": [\n    {\n      \"question_id\": 1,\n      \"selected_options\": [1]\n    },\n    {\n      \"question_id\": 2,\n      \"selected_options\": [1, 2, 4]\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/submissions/{{submission_id}}/draft",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "submissions",
+                                "{{submission_id}}",
+                                "draft"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Submit Test",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"answers\": [\n    {\n      \"question_id\": 1,\n      \"selected_options\": [1]\n    },\n    {\n      \"question_id\": 2,\n      \"selected_options\": [1, 2, 4]\n    },\n    {\n      \"question_id\": 3,\n      \"selected_options\": [1]\n    },\n    {\n      \"question_id\": 4,\n      \"answer_text\": \"composer create-project laravel/laravel my-project\"\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/submissions/{{submission_id}}/submit",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "submissions",
+                                "{{submission_id}}",
+                                "submit"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Grade Submission (Manual)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"gradings\": [\n    {\n      \"question_id\": 4,\n      \"points_earned\": 8,\n      \"feedback\": \"Good answer but missing some details about version specification.\"\n    }\n  ],\n  \"comments\": \"Overall good performance. Keep practicing Laravel commands.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/submissions/{{submission_id}}/grade",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "submissions",
+                                "{{submission_id}}",
+                                "grade"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My Test Submissions",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}/my-submissions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}",
+                                "my-submissions"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Pending Gradings (Instructor)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/tests/pending-gradings",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "pending-gradings"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Test",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/tests/{{test_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tests",
+                                "{{test_id}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "07 - Payments",
+            "item": [
+                {
+                    "name": "Calculate Total with Promo",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payments/calculate/{{course_id}}?promo_code=SUMMER2024",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "payments",
+                                "calculate",
+                                "{{course_id}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "promo_code",
+                                    "value": "SUMMER2024"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Payment - Stripe",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set('payment_id', jsonData.data.payment.id);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"course_id\": \"{{course_id}}\",\n  \"payment_gateway\": \"stripe\",\n  \"promo_code\": \"SUMMER2024\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payments/create",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "payments",
+                                "create"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Payment - PayPal",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"course_id\": \"{{course_id}}\",\n  \"payment_gateway\": \"paypal\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payments/create",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "payments",
+                                "create"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Complete Payment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"gateway_transaction_id\": \"pi_xxxxxxxxxxxxx\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payments/{{payment_id}}/complete",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "payments",
+                                "{{payment_id}}",
+                                "complete"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My Payments",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payments/my-payments",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "payments",
+                                "my-payments"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Request Refund",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"reason\": \"Course content does not match description\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payments/{{payment_id}}/refund",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "payments",
+                                "{{payment_id}}",
+                                "refund"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "08 - Student Dashboard",
+            "item": [
+                {
+                    "name": "Dashboard Overview",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/student/dashboard/overview",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "student",
+                                "dashboard",
+                                "overview"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My Enrollments",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/student/dashboard/enrollments?status=active",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "student",
+                                "dashboard",
+                                "enrollments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "active"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Enrollment Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/student/dashboard/enrollments/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "student",
+                                "dashboard",
+                                "enrollments",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My Certificates",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/student/dashboard/certificates",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "student",
+                                "dashboard",
+                                "certificates"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Download Certificate",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/student/dashboard/certificates/1/download",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "student",
+                                "dashboard",
+                                "certificates",
+                                "1",
+                                "download"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Verify Certificate (Public)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/certificates/verify/ABCD1234EFGH5678",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "certificates",
+                                "verify",
+                                "ABCD1234EFGH5678"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "09 - Instructor Dashboard",
+            "item": [
+                {
+                    "name": "Dashboard Overview",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/instructor/dashboard/overview",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "instructor",
+                                "dashboard",
+                                "overview"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/instructor/dashboard/courses?status=published",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "instructor",
+                                "dashboard",
+                                "courses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "published"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Course Analytics",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/instructor/dashboard/courses/{{course_id}}/analytics",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "instructor",
+                                "dashboard",
+                                "courses",
+                                "{{course_id}}",
+                                "analytics"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My Students",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/instructor/dashboard/students?course_id={{course_id}}&status=active",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "instructor",
+                                "dashboard",
+                                "students"
+                            ],
+                            "query": [
+                                {
+                                    "key": "course_id",
+                                    "value": "{{course_id}}"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "active"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Revenue Report",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/instructor/dashboard/revenue?start_date=2024-01-01&end_date=2024-12-31",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "instructor",
+                                "dashboard",
+                                "revenue"
+                            ],
+                            "query": [
+                                {
+                                    "key": "start_date",
+                                    "value": "2024-01-01"
+                                },
+                                {
+                                    "key": "end_date",
+                                    "value": "2024-12-31"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "10 - Admin Dashboard",
+            "item": [
+                {
+                    "name": "Dashboard Overview",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/admin/dashboard/overview",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "admin",
+                                "dashboard",
+                                "overview"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Manage Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/admin/dashboard/users?role=instructor&search=john",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "admin",
+                                "dashboard",
+                                "users"
+                            ],
+                            "query": [
+                                {
+                                    "key": "role",
+                                    "value": "instructor"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "john"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Manage Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/admin/dashboard/courses?status=pending",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "admin",
+                                "dashboard",
+                                "courses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "pending"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Manage Payments",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/admin/dashboard/payments?status=completed&start_date=2024-01-01",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "admin",
+                                "dashboard",
+                                "payments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "completed"
+                                },
+                                {
+                                    "key": "start_date",
+                                    "value": "2024-01-01"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

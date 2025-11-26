@@ -1,0 +1,67 @@
+{
+    "id": "training-platform-env",
+    "name": "Training Platform - Local",
+    "values": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "secret",
+            "enabled": true
+        },
+        {
+            "key": "course_id",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "chapter_id",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "lesson_id",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "test_id",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "submission_id",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "payment_id",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "resource_id",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "enrollment_id",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        }
+    ],
+    "_postman_variable_scope": "environment"
+}
