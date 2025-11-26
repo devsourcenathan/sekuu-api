@@ -10,10 +10,16 @@ class CourseSeeder extends Seeder
 {
     public function run(): void
     {
-        $instructors = User::where('role', 'instructor')->pluck('id');
+        // Get users with the 'instructor' role using the role relationship
+        $instructors = User::whereHas('roles', function ($query) {
+            $query->where('slug', 'instructor');
+        })->pluck('id');
 
-        Course::factory()->count(20)->create([
-            'instructor_id' => fn () => $instructors->random(),
-        ]);
+        // Only create courses if there are instructors
+        if ($instructors->isNotEmpty()) {
+            Course::factory()->count(20)->create([
+                'instructor_id' => fn () => $instructors->random(),
+            ]);
+        }
     }
 }

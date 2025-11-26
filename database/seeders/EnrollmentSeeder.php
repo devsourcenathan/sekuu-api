@@ -11,11 +11,15 @@ class EnrollmentSeeder extends Seeder
 {
     public function run(): void
     {
-        $students = User::where('role', 'student')->get();
+        // Get users with the 'student' role using the role relationship
+        $students = User::whereHas('roles', function ($query) {
+            $query->where('slug', 'student');
+        })->get();
+
         $courses = Course::all();
 
         foreach ($students as $student) {
-            Enrollment::factory()->count(3)->create([
+            Enrollment::factory()->count(rand(1, 5))->create([
                 'user_id' => $student->id,
                 'course_id' => $courses->random()->id,
             ]);

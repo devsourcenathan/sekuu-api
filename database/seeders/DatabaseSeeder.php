@@ -34,6 +34,10 @@ class DatabaseSeeder extends Seeder
             EnrollmentSeeder::class,
             CertificateSeeder::class,
             ResourceSeeder::class,
+            RoleSeeder::class,
+            PermissionSeeder::class,
+            AdminSeeder::class,
+            CategorySeeder::class,
         ]);
     }
 }
