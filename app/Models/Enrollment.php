@@ -12,6 +12,7 @@ class Enrollment extends Model
     protected $fillable = [
         'user_id',
         'course_id',
+        'pack_enrollment_id',
         'status',
         'enrolled_at',
         'expires_at',
@@ -48,6 +49,12 @@ class Enrollment extends Model
     {
         return $this->hasMany(LessonProgress::class);
     }
+
+    public function packEnrollment()
+    {
+        return $this->belongsTo(PackEnrollment::class);
+    }
+
 
     // Check if enrollment is active
     public function isActive()

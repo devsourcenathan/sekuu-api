@@ -110,6 +110,14 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function packs()
+    {
+        return $this->belongsToMany(Pack::class, 'pack_courses')
+            ->withPivot(['order', 'is_required', 'access_config'])
+            ->withTimestamps();
+    }
+
+
     // Helper methods
     public function isEnrollmentOpen()
     {

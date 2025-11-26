@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\ChapterController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\InstructorDashboardController;
 use App\Http\Controllers\Api\LessonController;
+use App\Http\Controllers\Api\PackController;
+use App\Http\Controllers\Api\PackEnrollmentController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ResourceController;
 use App\Http\Controllers\Api\StudentDashboardController;
@@ -33,6 +35,10 @@ Route::get('/media/{id}/thumbnail', [MediaController::class, 'thumbnail']);
 Route::get('/courses', [CourseController::class, 'index']);
 Route::get('/courses/{id}', [CourseController::class, 'show']);
 Route::get('/courses/slug/{slug}', [CourseController::class, 'getBySlug']);
+
+// Public packs
+Route::get('/packs', [PackController::class, 'index']);
+Route::get('/packs/{id}', [PackController::class, 'show']);
 
 // Categories
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -70,7 +76,37 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{courseId}/chapters/{id}', [ChapterController::class, 'destroy'])->middleware('permission:chapters.manage');
     });
 
-    // ===== CHAPTERS -> LESSONS =====
+    // ===== PACKS =====
+    Route::prefix('packs')->group(function () {
+        // Instructor pack management
+        Route::post('/', [PackController::class, 'store'])->middleware('permission:courses.create');
+        Route::put('/{id}', [PackController::class, 'update'])->middleware('permission:courses.edit');
+        Route::delete('/{id}', [PackController::class, 'destroy'])->middleware('permission:courses.delete');
+        Route::post('/{id}/publish', [PackController::class, 'publish'])->middleware('permission:courses.publish');
+        Route::post('/{id}/unpublish', [PackController::class, 'unpublish'])->middleware('permission:courses.publish');
+        Route::get('/{id}/statistics', [PackController::class, 'statistics'])->middleware('permission:courses.view');
+        
+        // Course management in pack
+        Route::post('/{id}/courses', [PackController::class, 'addCourse'])->middleware('permission:courses.edit');
+        Route::delete('/{packId}/courses/{courseId}', [PackController::class, 'removeCourse'])->middleware('permission:courses.edit');
+        Route::put('/{packId}/courses/{courseId}', [PackController::class, 'updateCourseConfig'])->middleware('permission:courses.edit');
+        
+        // Student enrollment
+        Route::post('/{id}/enroll', [PackEnrollmentController::class, 'enroll']);
+    });
+
+    // Instructor packs
+    Route::get('/instructor/packs', [PackController::class, 'myPacks'])->middleware('permission:courses.view');
+
+    // Student pack enrollments
+    Route::prefix('student')->group(function () {
+        Route::get('/pack-enrollments', [PackEnrollmentController::class, 'myPackEnrollments']);
+        Route::get('/pack-enrollments/{id}', [PackEnrollmentController::class, 'show']);
+        Route::get('/pack-enrollments/{id}/progress', [PackEnrollmentController::class, 'progress']);
+        Route::post('/pack-enrollments/{id}/cancel', [PackEnrollmentController::class, 'cancel']);
+    });
+
+    // ===== CHAPTERS -> LESSONS ===== LESSONS =====
     Route::prefix('chapters')->group(function () {
         // Tests
         Route::get('/{chapterId}/tests', [TestController::class, 'getTestsByChapter']);
