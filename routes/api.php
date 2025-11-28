@@ -7,12 +7,15 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ChapterController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\InstructorDashboardController;
 use App\Http\Controllers\Api\LessonController;
+use App\Http\Controllers\Api\MeetingRequestController;
 use App\Http\Controllers\Api\PackController;
 use App\Http\Controllers\Api\PackEnrollmentController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ResourceController;
+use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\StudentDashboardController;
 use App\Http\Controllers\Api\TestController;
 use Illuminate\Http\Request;
@@ -238,6 +241,44 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/permissions', [\App\Http\Controllers\Api\PermissionController::class, 'index'])->middleware('role:admin');
+
+    // ===== SESSIONS (Visioconférence) =====
+    Route::prefix('sessions')->group(function () {
+        Route::get('/', [SessionController::class, 'index']);
+        Route::post('/', [SessionController::class, 'store'])->middleware('permission:courses.view');
+        Route::get('/{session}', [SessionController::class, 'show']);
+        Route::put('/{session}', [SessionController::class, 'update'])->middleware('permission:courses.view');
+        Route::delete('/{session}', [SessionController::class, 'destroy'])->middleware('permission:courses.view');
+        Route::post('/{session}/start', [SessionController::class, 'start'])->middleware('permission:courses.view');
+        Route::post('/{session}/end', [SessionController::class, 'end'])->middleware('permission:courses.view');
+        Route::post('/{session}/token', [SessionController::class, 'generateToken']);
+        Route::get('/{session}/participants', [SessionController::class, 'participants']);
+        Route::post('/{session}/participants', [SessionController::class, 'addParticipants'])->middleware('permission:courses.view');
+        Route::delete('/{session}/participants/{user}', [SessionController::class, 'removeParticipant'])->middleware('permission:courses.view');
+    });
+
+    // ===== GROUPS (Groupes d'encadrement) =====
+    Route::prefix('groups')->middleware('permission:courses.view')->group(function () {
+        Route::get('/', [GroupController::class, 'index']);
+        Route::post('/', [GroupController::class, 'store']);
+        Route::get('/eligible-students', [GroupController::class, 'eligibleStudents']);
+        Route::get('/{group}', [GroupController::class, 'show']);
+        Route::put('/{group}', [GroupController::class, 'update']);
+        Route::delete('/{group}', [GroupController::class, 'destroy']);
+        Route::post('/{group}/members', [GroupController::class, 'addMembers']);
+        Route::delete('/{group}/members', [GroupController::class, 'removeMembers']);
+    });
+
+    // ===== MEETING REQUESTS =====
+    Route::prefix('meeting-requests')->group(function () {
+        Route::get('/', [MeetingRequestController::class, 'index']);
+        Route::post('/', [MeetingRequestController::class, 'store']);
+        Route::get('/eligible-instructors', [MeetingRequestController::class, 'eligibleInstructors']);
+        Route::get('/{meetingRequest}', [MeetingRequestController::class, 'show']);
+        Route::post('/{meetingRequest}/accept', [MeetingRequestController::class, 'accept'])->middleware('permission:courses.view');
+        Route::post('/{meetingRequest}/reject', [MeetingRequestController::class, 'reject'])->middleware('permission:courses.view');
+        Route::post('/{meetingRequest}/cancel', [MeetingRequestController::class, 'cancel']);
+    });
 });
 
 Route::get('/status', function () {
