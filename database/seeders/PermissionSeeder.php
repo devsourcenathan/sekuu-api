@@ -46,6 +46,31 @@ class PermissionSeeder extends Seeder
             
             // Analytics permissions
             ['name' => 'View Analytics', 'slug' => 'analytics.view', 'module' => 'analytics'],
+            
+            // Pack permissions
+            ['name' => 'View Packs', 'slug' => 'packs.view', 'module' => 'packs'],
+            ['name' => 'Create Packs', 'slug' => 'packs.create', 'module' => 'packs'],
+            ['name' => 'Edit Packs', 'slug' => 'packs.edit', 'module' => 'packs'],
+            ['name' => 'Delete Packs', 'slug' => 'packs.delete', 'module' => 'packs'],
+            ['name' => 'Publish Packs', 'slug' => 'packs.publish', 'module' => 'packs'],
+            
+            // Group permissions
+            ['name' => 'View Groups', 'slug' => 'groups.view', 'module' => 'groups'],
+            ['name' => 'Manage Groups', 'slug' => 'groups.manage', 'module' => 'groups'],
+            
+            // Session permissions
+            ['name' => 'View Sessions', 'slug' => 'sessions.view', 'module' => 'sessions'],
+            ['name' => 'Manage Sessions', 'slug' => 'sessions.manage', 'module' => 'sessions'],
+            
+            // Meeting Request permissions
+            ['name' => 'View Meeting Requests', 'slug' => 'meeting-requests.view', 'module' => 'meeting-requests'],
+            ['name' => 'Manage Meeting Requests', 'slug' => 'meeting-requests.manage', 'module' => 'meeting-requests'],
+            
+            // Category permissions
+            ['name' => 'Manage Categories', 'slug' => 'categories.manage', 'module' => 'categories'],
+            
+            // Resource permissions
+            ['name' => 'Manage Resources', 'slug' => 'resources.manage', 'module' => 'resources'],
         ];
 
         foreach ($permissions as $permission) {
@@ -58,7 +83,10 @@ class PermissionSeeder extends Seeder
 
         $admin = Role::where('slug', 'admin')->first();
         $admin->permissions()->attach(
-            Permission::whereIn('module', ['courses', 'tests', 'users', 'payments', 'analytics'])->pluck('id')
+            Permission::whereIn('module', [
+                'courses', 'tests', 'users', 'payments', 'analytics', 
+                'packs', 'groups', 'sessions', 'meeting-requests', 'categories', 'resources'
+            ])->pluck('id')
         );
 
         $instructor = Role::where('slug', 'instructor')->first();
@@ -67,7 +95,12 @@ class PermissionSeeder extends Seeder
                 'courses.view', 'courses.create', 'courses.edit', 'courses.publish',
                 'chapters.manage', 'lessons.manage',
                 'tests.view', 'tests.create', 'tests.edit', 'tests.evaluate',
-                'payments.view', 'analytics.view'
+                'payments.view', 'analytics.view',
+                'packs.view', 'packs.create', 'packs.edit', 'packs.publish',
+                'groups.view', 'groups.manage',
+                'sessions.view', 'sessions.manage',
+                'meeting-requests.view', 'meeting-requests.manage',
+                'resources.manage'
             ])->pluck('id')
         );
 

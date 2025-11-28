@@ -70,9 +70,18 @@ class LoginController extends Controller
 
     public function me(Request $request)
     {
+        $user = $request->user()->load(['roles.permissions', 'permissions']);
+        
+        // Get all unique permissions (from roles + direct)
+        $rolePermissions = $user->roles->flatMap->permissions;
+        $allPermissions = $rolePermissions->merge($user->permissions)->unique('id');
+        
         return response()->json([
             'success' => true,
-            'data' => $request->user()->load('roles', 'permissions')
+            'data' => [
+                'user' => $user,
+                'permissions' => $allPermissions->pluck('slug')->toArray(),
+            ]
         ]);
     }
 }

@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\ResourceController;
 use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\StudentDashboardController;
 use App\Http\Controllers\Api\TestController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -250,6 +251,15 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/permissions', [\App\Http\Controllers\Api\PermissionController::class, 'index'])->middleware('role:admin');
+
+    // ===== USERS MANAGEMENT =====
+    Route::prefix('users')->middleware('role:admin')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::get('/{userId}/permissions', [UserController::class, 'getUserPermissions']);
+        Route::post('/{userId}/permissions', [UserController::class, 'assignPermission']);
+        Route::delete('/{userId}/permissions/{permissionId}', [UserController::class, 'revokePermission']);
+        Route::get('/{userId}/effective-permissions', [UserController::class, 'getEffectivePermissions']);
+    });
 
     // ===== SESSIONS (Visioconférence) =====
     Route::prefix('sessions')->group(function () {
