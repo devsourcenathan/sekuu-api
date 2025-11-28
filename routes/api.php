@@ -109,6 +109,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/pack-enrollments/{id}/cancel', [PackEnrollmentController::class, 'cancel']);
     });
 
+    // Admin pack management
+    Route::prefix('admin')->middleware('role:admin')->group(function () {
+        Route::get('/packs', [PackController::class, 'adminIndex']);
+        Route::get('/packs/statistics', [PackController::class, 'adminStatistics']);
+        Route::put('/packs/{id}/status', [PackController::class, 'adminUpdateStatus']);
+        Route::delete('/packs/{id}/force', [PackController::class, 'adminForceDelete']);
+    });
+
+
     // ===== CHAPTERS -> LESSONS ===== LESSONS =====
     Route::prefix('chapters')->group(function () {
         // Tests

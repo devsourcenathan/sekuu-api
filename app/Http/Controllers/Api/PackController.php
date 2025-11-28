@@ -410,4 +410,161 @@ class PackController extends Controller
             'data' => $stats,
         ]);
     }
+
+    // ===== ADMIN METHODS =====
+
+    /**
+     * Admin: Get all packs with advanced filters
+     */
+    public function adminIndex(Request $request)
+    {
+        $query = Pack::with(['instructor', 'courses']);
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('instructor_id')) {
+            $query->where('instructor_id', $request->instructor_id);
+        }
+
+        if ($request->has('status')) {
+            switch ($request->status) {
+                case 'active':
+                    $query->where('is_active', true);
+                    break;
+                case 'inactive':
+                    $query->where('is_active', false);
+                    break;
+                case 'published':
+                    $query->where('is_active', true)->whereNotNull('published_at');
+                    break;
+            }
+        }
+
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        $packs = $query->paginate($request->get('per_page', 15));
+
+        return response()->json([
+            'success' => true,
+            'data' => $packs,
+        ]);
+    }
+
+    /**
+     * Admin: Get global pack statistics
+     */
+    public function adminStatistics()
+    {
+        $totalPacks = Pack::count();
+        $activePacks = Pack::where('is_active', true)->count();
+        $publishedPacks = Pack::where('is_active', true)->whereNotNull('published_at')->count();
+        
+        $totalStudents = Pack::sum('students_enrolled');
+        $totalRevenue = Pack::selectRaw('SUM(students_enrolled * price) as total')->value('total') ?? 0;
+
+        $packsByMonth = Pack::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->orderBy('month', 'desc')
+            ->limit(12)
+            ->get();
+
+        $topPacks = Pack::with('instructor')
+            ->orderBy('students_enrolled', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($pack) {
+                return [
+                    'id' => $pack->id,
+                    'title' => $pack->title,
+                    'instructor' => $pack->instructor->name ?? 'Unknown',
+                    'students' => $pack->students_enrolled,
+                    'revenue' => $pack->students_enrolled * $pack->price,
+                    'courses' => $pack->total_courses,
+                ];
+            });
+
+        $stats = [
+            'total_packs' => $totalPacks,
+            'active_packs' => $activePacks,
+            'published_packs' => $publishedPacks,
+            'total_students' => $totalStudents,
+            'total_revenue' => $totalRevenue,
+            'packs_by_month' => $packsByMonth,
+            'top_packs' => $topPacks,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+        ]);
+    }
+
+    /**
+     * Admin: Update pack status
+     */
+    public function adminUpdateStatus(Request $request, $id)
+    {
+        $pack = Pack::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'is_active' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $pack->update([
+                'is_active' => $request->is_active,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pack status updated successfully',
+                'data' => $pack->fresh(['instructor', 'courses']),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Admin: Force delete a pack (even with enrollments)
+     */
+    public function adminForceDelete($id)
+    {
+        $pack = Pack::withTrashed()->findOrFail($id);
+
+        try {
+            $pack->packEnrollments()->delete();
+            $pack->courses()->detach();
+            $pack->forceDelete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pack permanently deleted successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
