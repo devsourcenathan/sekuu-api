@@ -29,6 +29,9 @@ Route::get('/user', function (Request $request) {
 // Public routes
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
+Route::get('/login', function () {
+    return response()->json(['message' => 'Unauthenticated.'], 401);
+})->name('login');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 
@@ -330,6 +333,34 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{meetingRequest}/accept', [MeetingRequestController::class, 'accept'])->middleware('permission:courses.view');
         Route::post('/{meetingRequest}/reject', [MeetingRequestController::class, 'reject'])->middleware('permission:courses.view');
         Route::post('/{meetingRequest}/cancel', [MeetingRequestController::class, 'cancel']);
+    });
+
+    // ===== SUBSCRIPTIONS =====
+    // Admin subscription plan management
+    Route::prefix('admin/subscription-plans')->middleware('role:admin')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\SubscriptionPlanController::class, 'index']);
+        Route::post('/', [\App\Http\Controllers\Api\SubscriptionPlanController::class, 'store']);
+        Route::get('/{plan}', [\App\Http\Controllers\Api\SubscriptionPlanController::class, 'show']);
+        Route::put('/{plan}', [\App\Http\Controllers\Api\SubscriptionPlanController::class, 'update']);
+        Route::delete('/{plan}', [\App\Http\Controllers\Api\SubscriptionPlanController::class, 'destroy']);
+        Route::put('/{plan}/limits', [\App\Http\Controllers\Api\SubscriptionPlanController::class, 'setLimits']);
+        Route::put('/{plan}/features', [\App\Http\Controllers\Api\SubscriptionPlanController::class, 'setFeatures']);
+    });
+
+    // User subscription endpoints
+    Route::prefix('subscription')->group(function () {
+        Route::get('/current', [\App\Http\Controllers\Api\UserSubscriptionController::class, 'current']);
+        Route::get('/plans', [\App\Http\Controllers\Api\UserSubscriptionController::class, 'availablePlans']);
+        Route::get('/usage', [\App\Http\Controllers\Api\UserSubscriptionController::class, 'usage']);
+        Route::get('/history', [\App\Http\Controllers\Api\UserSubscriptionController::class, 'history']);
+    });
+
+    // Subscription upgrade/downgrade
+    Route::prefix('subscription')->group(function () {
+        Route::get('/upgrade/preview/{plan}', [\App\Http\Controllers\Api\SubscriptionUpgradeController::class, 'preview']);
+        Route::post('/upgrade', [\App\Http\Controllers\Api\SubscriptionUpgradeController::class, 'upgrade']);
+        Route::post('/downgrade', [\App\Http\Controllers\Api\SubscriptionUpgradeController::class, 'downgrade']);
+        Route::post('/cancel', [\App\Http\Controllers\Api\SubscriptionUpgradeController::class, 'cancel']);
     });
 });
 

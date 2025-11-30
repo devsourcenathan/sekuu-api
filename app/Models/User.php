@@ -196,4 +196,117 @@ class User extends Authenticatable
             ->whereNull('payout_id')
             ->sum('instructor_amount');
     }
+    // Subscription relationships
+    public function currentSubscription()
+    {
+        return $this->belongsTo(UserSubscription::class, 'current_subscription_id');
+    }
+
+    public function subscriptionHistory()
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function usageTracking()
+    {
+        return $this->hasMany(UsageTracking::class);
+    }
+
+    // Subscription helper methods
+    public function getActivePlan(): ?SubscriptionPlan
+    {
+        $subscription = $this->currentSubscription;
+        
+        if (!$subscription || !$subscription->isActive()) {
+            return null;
+        }
+
+        return $subscription->plan;
+    }
+
+    public function hasSubscriptionFeature(string $permission): bool
+    {
+        $plan = $this->getActivePlan();
+        
+        if (!$plan) {
+            return false;
+        }
+
+        return $plan->hasFeature($permission);
+    }
+
+    public function canPerformAction(string $permission, ?string $resourceType = null): array
+    {
+        // Check if user has the permission via roles
+        $hasPermission = $this->hasPermission($permission);
+        
+        if (!$hasPermission) {
+            return [
+                'allowed' => false,
+                'reason' => 'missing_permission',
+                'message' => 'You do not have permission to perform this action.',
+            ];
+        }
+
+        // Check if user's subscription includes this feature
+        $hasFeature = $this->hasSubscriptionFeature($permission);
+        
+        if (!$hasFeature) {
+            return [
+                'allowed' => false,
+                'reason' => 'subscription_feature_required',
+                'message' => 'Your current subscription plan does not include this feature. Please upgrade.',
+                'current_plan' => $this->getActivePlan()?->name,
+            ];
+        }
+
+        // Check resource limits if applicable
+        if ($resourceType) {
+            $plan = $this->getActivePlan();
+            $limit = $plan->getLimit($resourceType);
+            $currentUsage = $this->getCurrentUsage($resourceType);
+
+            if ($limit !== -1 && $currentUsage >= $limit) {
+                return [
+                    'allowed' => false,
+                    'reason' => 'limit_reached',
+                    'message' => "You have reached the limit for {$resourceType} on your current plan.",
+                    'current_usage' => $currentUsage,
+                    'limit' => $limit,
+                    'current_plan' => $plan->name,
+                ];
+            }
+        }
+
+        return [
+            'allowed' => true,
+        ];
+    }
+
+    public function getCurrentUsage(string $resourceType): int
+    {
+        $tracking = $this->usageTracking()
+            ->where('resource_type', $resourceType)
+            ->first();
+
+        return $tracking ? $tracking->current_count : 0;
+    }
+
+    public function getRemainingQuota(string $resourceType): int
+    {
+        $plan = $this->getActivePlan();
+        
+        if (!$plan) {
+            return 0;
+        }
+
+        $limit = $plan->getLimit($resourceType);
+        
+        if ($limit === -1) {
+            return -1; // Unlimited
+        }
+
+        $currentUsage = $this->getCurrentUsage($resourceType);
+        return max(0, $limit - $currentUsage);
+    }
 }
