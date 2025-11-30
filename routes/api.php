@@ -51,6 +51,13 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 // Certificate verification
 Route::get('/certificates/verify/{code}', [StudentDashboardController::class, 'verifyCertificate']);
 
+// Legal Pages (public)
+Route::get('/legal/{slug}', [\App\Http\Controllers\Api\LegalPageController::class, 'show']);
+
+// Currency (public)
+Route::get('/currency/rates/{base}', [\App\Http\Controllers\Api\CurrencyController::class, 'getRates']);
+Route::get('/currency/convert', [\App\Http\Controllers\Api\CurrencyController::class, 'convert']);
+
 // Payment webhooks
 Route::post('/webhooks/stripe', [PaymentController::class, 'webhookStripe']);
 Route::post('/webhooks/paypal', [PaymentController::class, 'webhookPaypal']);
@@ -59,6 +66,26 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::get('/me', [LoginController::class, 'me']);
+
+    // User Settings
+    Route::put('/user/settings/currency', [\App\Http\Controllers\Api\CurrencyController::class, 'updatePreferredCurrency']);
+    Route::put('/user/profile', [\App\Http\Controllers\Api\UserSettingsController::class, 'updateProfile']);
+    Route::put('/user/password', [\App\Http\Controllers\Api\UserSettingsController::class, 'updatePassword']);
+
+    // Payment Methods
+    Route::prefix('payment-methods')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\PaymentMethodController::class, 'index']);
+        Route::post('/', [\App\Http\Controllers\Api\PaymentMethodController::class, 'store']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\PaymentMethodController::class, 'destroy']);
+        Route::put('/{id}/default', [\App\Http\Controllers\Api\PaymentMethodController::class, 'setDefault']);
+    });
+
+    // Instructor Payout
+    Route::prefix('instructor')->middleware('permission:courses.view')->group(function () {
+        Route::get('/earnings', [\App\Http\Controllers\Api\InstructorPayoutController::class, 'getEarnings']);
+        Route::put('/payout-settings', [\App\Http\Controllers\Api\InstructorPayoutController::class, 'updatePayoutSettings']);
+        Route::post('/request-payout', [\App\Http\Controllers\Api\InstructorPayoutController::class, 'requestPayout']);
+    });
 
     // ===== COURSES =====
     Route::prefix('courses')->group(function () {
@@ -207,6 +234,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/users', [AdminDashboardController::class, 'users']);
         Route::get('/courses', [AdminDashboardController::class, 'courses']);
         Route::get('/payments', [AdminDashboardController::class, 'payments']);
+    });
+
+    // ===== ADMIN LEGAL PAGES =====
+    Route::prefix('admin/legal')->middleware('role:admin')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\LegalPageController::class, 'index']);
+        Route::put('/{slug}', [\App\Http\Controllers\Api\LegalPageController::class, 'upsert']);
     });
 
     // Media management

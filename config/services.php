@@ -18,14 +18,14 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
-    'resend' => [
-        'key' => env('RESEND_KEY'),
-    ],
-
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    ],
+
+    'resend' => [
+        'key' => env('RESEND_KEY'),
     ],
 
     'slack' => [
@@ -33,18 +33,6 @@ return [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
-    ],
-
-    'vimeo' => [
-        'token' => env('VIMEO_ACCESS_TOKEN'),
-        'client_id' => env('VIMEO_CLIENT_ID'),
-        'client_secret' => env('VIMEO_CLIENT_SECRET'),
-    ],
-
-    'youtube' => [
-        'key' => env('YOUTUBE_API_KEY'),
-        'client_id' => env('YOUTUBE_CLIENT_ID'),
-        'client_secret' => env('YOUTUBE_CLIENT_SECRET'),
     ],
 
     'stripe' => [
@@ -57,7 +45,19 @@ return [
         'mode' => env('PAYPAL_MODE', 'sandbox'),
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'secret' => env('PAYPAL_SECRET'),
-        'webhook_id' => env('PAYPAL_WEBHOOK_ID'),
+    ],
+
+    'currency' => [
+        'api_key' => env('CURRENCY_API_KEY'),
+        'cache_duration' => env('CURRENCY_CACHE_DURATION', 3600), // 1 hour
+    ],
+
+    'flutterwave' => [
+        'public_key' => env('FLUTTERWAVE_PUBLIC_KEY'),
+        'secret_key' => env('FLUTTERWAVE_SECRET_KEY'),
+        'encryption_key' => env('FLUTTERWAVE_ENCRYPTION_KEY'),
+        'webhook_secret' => env('FLUTTERWAVE_WEBHOOK_SECRET'),
+        'environment' => env('FLUTTERWAVE_ENV', 'sandbox'), // 'sandbox' or 'live'
     ],
 
 ];

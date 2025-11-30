@@ -5,6 +5,7 @@ namespace App\Services;
 use Stripe\PaymentIntent;
 use Stripe\Refund;
 use Stripe\Stripe;
+use App\Models\User;
 
 class StripePaymentGateway implements PaymentGatewayInterface
 {
@@ -102,5 +103,21 @@ class StripePaymentGateway implements PaymentGatewayInterface
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    public function savePaymentMethod(User $user, array $data): array{
+        return [];
+    }
+
+    public function listPaymentMethods(User $user): array{
+        return [];
+    }
+
+    public function deletePaymentMethod(string $paymentMethodId):bool{
+        return true;
+    }
+
+    public function chargePaymentMethod(string $paymentMethodId, float $amount, string $currency): array{
+        return [];
     }
 }

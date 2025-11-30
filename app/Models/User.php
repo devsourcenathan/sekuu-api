@@ -19,6 +19,13 @@ class User extends Authenticatable
         'phone',
         'avatar',
         'is_active',
+        'preferred_currency',
+        'stripe_customer_id',
+        'payout_method',
+        'payout_currency',
+        'payout_schedule',
+        'payout_threshold',
+        'payout_details',
     ];
 
     protected $hidden = [
@@ -30,6 +37,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
+        'payout_details' => 'array',
+        'payout_threshold' => 'decimal:2',
     ];
 
     // Relations
@@ -144,5 +153,47 @@ class User extends Authenticatable
     public function testSubmissions()
     {
         return $this->hasMany(TestSubmission::class);
+    }
+
+    public function paymentMethods()
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    // Currency helper methods
+    public function getPreferredCurrency(): string
+    {
+        return $this->preferred_currency ?? 'USD';
+    }
+
+    // Instructor payout helper methods
+    public function getPayoutDetails(): array
+    {
+        return $this->payout_details ?? [];
+    }
+
+    public function updatePayoutSettings(array $settings): void
+    {
+        $this->update([
+            'payout_method' => $settings['method'],
+            'payout_currency' => $settings['currency'],
+            'payout_schedule' => $settings['schedule'],
+            'payout_threshold' => $settings['threshold'],
+            'payout_details' => $settings['details'],
+        ]);
+    }
+
+    public function canRequestPayout(): bool
+    {
+        $earnings = $this->calculatePendingEarnings();
+        return $earnings >= $this->payout_threshold;
+    }
+
+    public function calculatePendingEarnings(): float
+    {
+        return $this->payments()
+            ->where('status', 'completed')
+            ->whereNull('payout_id')
+            ->sum('instructor_amount');
     }
 }
